@@ -116,7 +116,7 @@ INNER JOIN users u ON u.userId=p.userId;
 
 DELIMITER //
 CREATE PROCEDURE sp_createUser(IN _email VARCHAR(127), IN _username VARCHAR(127), IN _fullname VARCHAR(127), 
-IN _surname VARCHAR(127), IN password VARCHAR(127),IN _activeCode BINARY(16)) 
+IN _surname VARCHAR(127), IN password VARCHAR(127)) 
 BEGIN
     DECLARE _userId INT DEFAULT 0;
     

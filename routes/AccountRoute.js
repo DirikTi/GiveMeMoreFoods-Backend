@@ -29,35 +29,27 @@ router.post('/login', [ValidationMiddleware(Validations.loginAccout)], async (re
 });
 
 router.post("/register", [ValidationMiddleware(Validations.createAccount)], async (req, resp) => {
-    const { email, fullname, surname, phoneNumber, companyName, companyDescription, countryId, cityId, districtId
-    } = req.body;
+    const { email, fullname, surname, username } = req.body;
     console.log(req.body);
     const encrpytionTargetPassword = MyCrypto.encrpytion(req.body.password);
-    const confirmCode = generateEmailCode();
+    const confirmCode = generateEmailCode(); // For Email Access Code
 
-    let query = "CALL sp_CreateAdmin('" + companyName + "','" + companyDescription + "',1,'" + fullname + "','"
-    + surname + "','" + email + "','" + encrpytionTargetPassword + "','" + confirmCode + "','" + phoneNumber + 
-    "',0," + countryId + "," + cityId + "," + districtId + ")";
-
-    MailSender.sendEmailVerify(email, "", companyName, 
-    "http://localhost:3000/account/email/verify?token=" + confirmCode + "&email=" + email);
+    let query = "CALL sp_CreateAdmin('" + email + "','" + username + "','" + fullname + "','" + surname + 
+    "','" + encrpytionTargetPassword + "')";
 
     /*
+    MailSender.sendEmailVerify(email, "", companyName, 
+    "http://localhost:3000/account/email/verify?token=" + confirmCode + "&email=" + email);
+*/
     const result = await mysqlAsi.executeQueryAsync(query);
     let myResult = result[0][0].RESULT;
 
     if (myResult == 'SUCCESS') {
         resp.json(successResponse(null, "SUCCESS"));
-    } else if (myResult == "HAS_USER" || myResult == "HAS_COMPANY") {
-        resp.json(failureResponse(null, myResult));
     } else {
-        resp.sendStatus(500);
+        resp.json(failureResponse(null, myResult));
     }
     
-    */
-
-    resp.json(failureResponse(null, "HAS_COMPANY"));
-
     resp.end();
 });
 
