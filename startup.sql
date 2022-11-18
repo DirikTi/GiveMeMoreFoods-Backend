@@ -3,14 +3,16 @@ CREATE TABLE users (
     email CHAR(127) NOT NULL,
     fullname CHAR(127) NOT NULL,
     surname CHAR(127) NOT NULL,
-    username CHAR(127) NOT NULL,
+    username CHAR(127) DEFAULT NULL,
     password CHAR(127) NOT NULL,
     avatar CHAR(127) NOT NULL,
-    userLoginToken binary(16) DEFAULT NULL,
-    userLoginTokenText varchar(36) GENERATED ALWAYS AS (insert(insert(insert(insert(hex(userLoginToken),9,0,_utf8mb4'-'),14,0,_utf8mb4'-'),19,0,_utf8mb4'-'),24,0,_utf8mb4'-')) VIRTUAL,
+    userLoginToken BINARY(16) DEFAULT NULL,
+    userLoginTokenText VARCHAR(36) GENERATED ALWAYS AS (insert(insert(insert(insert(hex(userLoginToken),9,0,_utf8mb4'-'),14,0,_utf8mb4'-'),19,0,_utf8mb4'-'),24,0,_utf8mb4'-')) VIRTUAL,
+    activeCode BINARY(16),
     isActive TINYINT(1) NOT NULL DEFAULT 1,
     createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP,
+    lastLoginDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     PRIMARY KEY(userId),
     UNIQUE KEY(email, username)
 ) ENGINE=InnoDB;
@@ -111,6 +113,36 @@ u.userId AS whoCreateUserId, u.username, u.avatar, u.isActive AS userIsActive
 FROM products p
 INNER JOIN category c ON c.categoryId=p.categoryId
 INNER JOIN users u ON u.userId=p.userId;
+
+DELIMITER //
+CREATE PROCEDURE sp_createUser(IN _email VARCHAR(127), IN _username VARCHAR(127), IN _fullname VARCHAR(127), 
+IN _surname VARCHAR(127), IN password VARCHAR(127),IN _activeCode BINARY(16)) 
+BEGIN
+    DECLARE _userId INT DEFAULT 0;
+    
+    SELECT userId INTO _userId 
+    FROM users 
+    WHERE email=_email LIMIT 1;
+
+    IF _userId=0 THEN
+
+        SELECT userId INTO _userId
+        FROM users
+        WHERE username=_username LIMIT 1;
+
+        IF _userId=0 THEN            
+            INSERT INTO users (email, username, fullname, surname, password) 
+            VALUES (_email, _username _fullname, _surname, _password);
+
+            SELECT 'SUCCESS' AS RESULT, 0 AS ERROR;
+        ELSE
+            SELECT 'SAME_USERNAME' AS RESULT, 1 AS ERROR;
+        END IF;
+    ELSE 
+        SELECT 'SAME_EMAIL' AS RESULT, 1 AS ERROR;
+    END IF;   
+
+END
 
 /*
     The MySQL feature for finding words, phrases,
