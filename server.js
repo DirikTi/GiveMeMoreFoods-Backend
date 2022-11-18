@@ -1,7 +1,6 @@
 import express, { response } from "express";
 import { createServer } from 'http';
 import cors from 'cors';
-import ejs from 'ejs';
 import bodyParser from 'body-parser';
 //Routers
 import AccountRoute from './routes/AccountRoute.js';

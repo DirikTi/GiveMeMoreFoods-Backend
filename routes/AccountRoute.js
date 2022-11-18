@@ -5,7 +5,6 @@ import mysqlAsi from '../src/database/MysqlAsi.js';
 import ValidationMiddleware from '../src/middleware/ValidationMiddleware.js';
 import Validations from '../src/models/Validations/Validations.js';
 import { randomUUID } from 'crypto';
-import MailSender, { generateEmailCode } from '../src/helpers/MailSender.js';
 
 const router = Router();
 
