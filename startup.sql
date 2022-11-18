@@ -9,8 +9,8 @@ CREATE TABLE users (
     userLoginToken binary(16) DEFAULT NULL,
     userLoginTokenText varchar(36) GENERATED ALWAYS AS (insert(insert(insert(insert(hex(userLoginToken),9,0,_utf8mb4'-'),14,0,_utf8mb4'-'),19,0,_utf8mb4'-'),24,0,_utf8mb4'-')) VIRTUAL,
     isActive TINYINT(1) NOT NULL DEFAULT 1,
-    createdDate TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-    updatedDate TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY(userId),
     UNIQUE KEY(email, username)
 ) ENGINE=InnoDB;
@@ -21,8 +21,8 @@ CREATE TABLE category (
     description CHAR(255),
     imagePath CHAR(255) NOT NULL,
     isActive TINYINT(1) NOT NULL DEFAULT 1,
-    createdDate TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-    updatedDate TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
     INDEX USING BTREE (categoryId)
 ) ENGINE=MEMORY;
 
@@ -37,13 +37,13 @@ CREATE TABLE products (
     imagePath CHAR(255) NOT NULL,
     images TEXT NOT NULL,
     isActive TINYINT(1) NOT NULL DEFAULT 1,
-    createdDate TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-    updatedDate TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
     PRIMARY KEY (productId),
     -- FOREIGN KEY (categoryId) REFERENCES category(categoryId),
     FOREIGN KEY (userId) REFERENCES users(userId),
     FULLTEXT KEY (productName, description)
-) ENGINE=InnoDB -- ENGINE=MyISAM;
+) ENGINE=InnoDB; -- ENGINE=MyISAM;
 
 CREATE TABLE products_heart_users (
     productHeartUsersId BIGINT NOT NULL, 
@@ -51,13 +51,13 @@ CREATE TABLE products_heart_users (
     categoryId SMALLINT NOT NULL,
     userId INT UNSIGNED NOT NULL,
     isHeart INT NOT NULL,
-    createdDate TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-    updatedDate TIMESTAMP NOT NULL DEFAULT current_timestamp()  ON UPDATE CURRENT_TIMESTAMP,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()  ON UPDATE CURRENT_TIMESTAMP(),
     PRIMARY KEY (productHeartUsersId),
     FOREIGN KEY (productId) REFERENCES products(productId),
-    FOREIGN KEY (categoryId) REFERENCES category(categoryId),
+    -- FOREIGN KEY (categoryId) REFERENCES category(categoryId),
     FOREIGN KEY (userId) REFERENCES users(userId)
-) ENGINE=InnoDB -- ENGINE=ARCHIVE;
+) ENGINE=InnoDB; -- ENGINE=ARCHIVE;
 
 CREATE TABLE products_visit_users (
     productHeartUsersId BIGINT NOT NULL, 
@@ -65,13 +65,29 @@ CREATE TABLE products_visit_users (
     categoryId INT NOT NULL,
     userId INT UNSIGNED NOT NULL,
     visited INT NOT NULL DEFAULT 1,
-    createdDate TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-    updatedDate TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
     PRIMARY KEY (productHeartUsersId),
     FOREIGN KEY (productId) REFERENCES products(productId),
-    FOREIGN KEY (categoryId) REFERENCES category(categoryId),
+    -- FOREIGN KEY (categoryId) REFERENCES category(categoryId),
     FOREIGN KEY (userId) REFERENCES users(userId)
-) ENGINE=InnoDB -- ENGINE=ARCHIVE;
+) ENGINE=InnoDB; -- ENGINE=ARCHIVE;
+
+
+CREATE TABLE requests (
+  id int(11) NOT NULL,
+  request_body text DEFAULT NULL,
+  request_query text DEFAULT NULL,
+  base_url char(255) DEFAULT NULL,
+  headers text DEFAULT NULL,
+  method char(32) DEFAULT NULL,
+  response_body text DEFAULT NULL,
+  sender_ip_address char(63) DEFAULT NULL,
+  user_id char(100) DEFAULT NULL,
+  is_error bit(1) DEFAULT NULL,
+  status int(11) DEFAULT NULL,
+  createDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- If you don't have Engine Archive 
 -- https://stackoverflow.com/questions/55241615/mysql-sys-exec-cant-open-shared-library-lib-mysqludf-sys-so-errno-11-wrong
