@@ -86,7 +86,7 @@ CREATE TABLE requests (
   user_id char(100) DEFAULT NULL,
   is_error bit(1) DEFAULT NULL,
   status int(11) DEFAULT NULL,
-  createDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
+  createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- If you don't have Engine Archive 
@@ -103,6 +103,14 @@ BEGIN
     );
 END $$
 DELIMITER ;
+
+CREATE VIEW v_product AS
+SELECT p.productId, p.productName, p.description AS productDesc, p.imagePath, p.images, p.isActive AS productIsActive,
+c.categoryId, c.categoryName, c.description AS categoryDesc, c.isActive AS categoryIsActive, c.createdDate AS categoryCreatedDate,
+u.userId AS whoCreateUserId, u.username, u.avatar, u.isActive AS userIsActive
+FROM products p
+INNER JOIN category c ON c.categoryId=p.categoryId
+INNER JOIN users u ON u.userId=p.userId;
 
 /*
     The MySQL feature for finding words, phrases,
