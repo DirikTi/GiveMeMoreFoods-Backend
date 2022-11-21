@@ -11,7 +11,7 @@ CREATE TABLE users (
     activeCode BINARY(16),
     isActive TINYINT(1) NOT NULL DEFAULT 1,
     createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP,
+    updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
     lastLoginDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     PRIMARY KEY(userId),
     UNIQUE KEY(email, username)
@@ -52,7 +52,7 @@ CREATE TABLE products_heart_users (
     productId INT NOT NULL,
     categoryId SMALLINT NOT NULL,
     userId INT UNSIGNED NOT NULL,
-    isHeart INT NOT NULL,
+    isHeart TINYINT(1) NOT NULL,
     createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()  ON UPDATE CURRENT_TIMESTAMP(),
     PRIMARY KEY (productHeartUsersId),
@@ -106,17 +106,48 @@ BEGIN
 END $$
 DELIMITER ;
 
-CREATE VIEW v_product AS
+CREATE VIEW v_products AS
 SELECT p.productId, p.productName, p.description AS productDesc, p.imagePath, p.images, p.isActive AS productIsActive,
 c.categoryId, c.categoryName, c.description AS categoryDesc, c.isActive AS categoryIsActive, c.createdDate AS categoryCreatedDate,
+(
+    SELECT COUNT(1) 
+    FROM products_heart_users phu
+    WHERE phu.productId=p.productId AND phu.isHeart=1
+) AS heartCount,
+(
+    SELECT SUM(1)
+    FROM products_visit_users pvu
+    WHERE pvu.productId=p.productId
+) AS visitCount,
 u.userId AS whoCreateUserId, u.username, u.avatar, u.isActive AS userIsActive
 FROM products p
 INNER JOIN category c ON c.categoryId=p.categoryId
 INNER JOIN users u ON u.userId=p.userId;
 
+CREATE VIEW v_users AS
+SELECT userId, username, fullname, surname, email, password, avatar (
+    SELECT COUNT(1) 
+    FROM products_heart_users phu 
+    WHERE phu.userId=u.userId 
+    ) AS heartCount,(
+    SELECT CONCAT('[',
+        GROUP_CONCAT(
+            JSON_OBJECT(
+                'productId', p.productId,
+                'productName', p.productName,
+                'productImage', p.imagePath
+            )
+        )   
+    ,']')
+    FROM products_heart_users phu
+    INNER JOIN products p ON p.productId=phu.productId
+    WHERE phu.userId=u.userId LIMIT 50
+) AS heartProducts
+FROM users u;
+
 DELIMITER //
 CREATE PROCEDURE sp_createUser(IN _email VARCHAR(127), IN _username VARCHAR(127), IN _fullname VARCHAR(127), 
-IN _surname VARCHAR(127), IN password VARCHAR(127)) 
+IN _surname VARCHAR(127), IN _password VARCHAR(127)) 
 BEGIN
     DECLARE _userId INT DEFAULT 0;
     
@@ -132,7 +163,7 @@ BEGIN
 
         IF _userId=0 THEN            
             INSERT INTO users (email, username, fullname, surname, password) 
-            VALUES (_email, _username _fullname, _surname, _password);
+            VALUES (_email, _username, _fullname, _surname, _password);
 
             SELECT 'SUCCESS' AS RESULT, 0 AS ERROR;
         ELSE
@@ -142,11 +173,18 @@ BEGIN
         SELECT 'SAME_EMAIL' AS RESULT, 1 AS ERROR;
     END IF;   
 
-END
-
+END //
+DELIMITER ;
 /*
     The MySQL feature for finding words, phrases,
     Boolean combinations of words, and so on within table data, in a faster,
     more convenient, and more flexible way than using the SQL LIKE operator or writing your own application-level 
     search algorithm. It uses the SQL function MATCH() and FULLTEXT indexes.
+*/
+
+/*
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/DirikTi/GiveMeMoreFoods.git
+git push -u origin main
 */

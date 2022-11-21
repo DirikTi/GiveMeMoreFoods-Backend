@@ -3,7 +3,7 @@ import { MyJWT } from '../helpers/Encryption.js';
 import { errorResponse } from '../helpers/ResponseService.js';
 
 
-export default function AuthMiddleware(roleCode = "") {
+export default function AuthMiddleware() {
 
     /**
      * @param {import("express").Request} req

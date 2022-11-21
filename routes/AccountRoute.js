@@ -11,18 +11,27 @@ const router = Router();
 
 router.post('/login', [ValidationMiddleware(Validations.loginAccout)], async (req, resp) => {
     const email = req.body.email;
-    const encrpytionTargetPassword = MyCrypto.encrpytion(req.body.password);
+    
+    try {
+        const encrpytionTargetPassword = MyCrypto.encrpytion(req.body.password);
 
-    const token = randomUUID();
-    const loginJWT = MyJWT.createToken(token);
 
-    let query = "CALL sp_LoginUser('" + email + "', '" + encrpytionTargetPassword + "', '" + token + "')";
-    let results = await mysqlAsi.executeQueryAsync(query);
-
-    if (results[0] == undefined) {
-        resp.json(failureResponse(null, "Not Found User"));
-    } else {
-        resp.json(successResponse({ ...results[0][0], jwtToken: loginJWT }, "Login User"));
+        const token = randomUUID();
+        const loginJWT = MyJWT.createToken(token);
+    
+        let query = "SELECT * FROM v_users WHERE userEmail='" + email + "', AND password='" + encrpytionTargetPassword + "' LIMIT 1";
+        let results = await mysqlAsi.executeQueryAsync(query);
+    
+        if (results[0] == undefined) {
+            resp.json(failureResponse(null, "Not Found User"));
+        } else {
+            query  = "UPDATE users SET lastLoginDate=CURRENT_TIMESTAMP() WHERE userId=" + results[0].userId;
+            mysqlAsi.executeQuery(query);
+            delete results[0].password;
+            resp.json(successResponse({ ...results[0], jwtToken: loginJWT }, "Login User"));
+        }
+    } catch (error) {
+        resp.json(errorResponse(null, "INTERNAL SERVER ERROR"));
     }
 
     resp.end();
@@ -71,15 +80,31 @@ router.post("/has", async (req, resp) => {
 
     let secretMessage = MyJWT.decodeToken(token);
 
-    let result = await mysqlAsi.executeQueryAsync("CALL sp_LoginUserWithToken('" + secretMessage + "');");
+    let result = await mysqlAsi.executeQueryAsync("SELECT * FROM v_users loginUserToken=CONVERT_UUID('" + secretMessage + "')");
 
     if (result[0] == undefined) {
         resp.json(errorResponse(null, "JWT Token not found user ==> IP_ADRESS " + req.ip, 401));
         return -1;
     }
+    mysqlAsi.executeQuery("UPDATE users SET lastLoginDate=CURRENT_TIMESTAMP WHERE userId=" + result[0].userId);
 
-    resp.json(successResponse(result[0][0]));
-})
+    resp.json(successResponse(result[0]));
+    resp.end();
+});
 
+router.post("/avatar", [AuthMiddleware(), uploadPhotoMiddleware.single('image_path')], async(req, resp) => {
+    let image_path = req.body.image_path;
+    const imageBUFFER = req.file;
+
+    if (image_path == undefined) {
+        //image_path = await uploadImageFirebaseAsync(imageBUFFER.buffer);
+    } else {
+        if(isWoman == "1") {
+            image_path = "http://localhost:3000/assets/images/avtar/default-man.png";
+        } else {
+            image_path = "http://localhost:3000/assets/images/avtar/default-woman.png"
+        }
+    }
+});
 
 export default router;

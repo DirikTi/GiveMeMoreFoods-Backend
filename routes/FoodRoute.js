@@ -6,11 +6,12 @@ import ValidationMiddleware from '../src/middleware/ValidationMiddleware.js';
 import Validations from '../src/models/Validations/Validations.js';
 import { randomUUID } from 'crypto';
 import MailSender, { generateEmailCode } from '../src/helpers/MailSender.js';
+import AuthMiddleware from '../src/middleware/Authtencation.js';
 
 const router = Router();
 
 
-router.get("/", async (req, resp) => {
+router.get("/", [AuthMiddleware()], async (req, resp) => {
     
 
 });
