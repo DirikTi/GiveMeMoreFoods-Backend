@@ -22,9 +22,6 @@ CREATE TABLE category (
     categoryName CHAR(127) NOT NULL,
     description CHAR(255),
     imagePath CHAR(255) NOT NULL,
-    isActive TINYINT(1) NOT NULL DEFAULT 1,
-    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    updatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
     INDEX USING BTREE (categoryId)
 ) ENGINE=MEMORY;
 
@@ -48,7 +45,7 @@ CREATE TABLE products (
 ) ENGINE=InnoDB; -- ENGINE=MyISAM;
 
 CREATE TABLE products_heart_users (
-    productHeartUsersId BIGINT NOT NULL, 
+    productHeartUsersId BIGINT NOT NULL AUTO_INCREMENT, 
     productId INT NOT NULL,
     categoryId SMALLINT NOT NULL,
     userId INT UNSIGNED NOT NULL,
@@ -62,7 +59,7 @@ CREATE TABLE products_heart_users (
 ) ENGINE=InnoDB; -- ENGINE=ARCHIVE;
 
 CREATE TABLE products_visit_users (
-    productHeartUsersId BIGINT NOT NULL, 
+    productHeartUsersId BIGINT NOT NULL AUTO_INCREMENT, 
     productId INT NOT NULL,
     categoryId INT NOT NULL,
     userId INT UNSIGNED NOT NULL,
@@ -77,7 +74,7 @@ CREATE TABLE products_visit_users (
 
 
 CREATE TABLE requests (
-  id int(11) NOT NULL,
+  id int(11) NOT NULL AUTO_INCREMENT,
   request_body text DEFAULT NULL,
   request_query text DEFAULT NULL,
   base_url char(255) DEFAULT NULL,
@@ -175,6 +172,24 @@ BEGIN
 
 END //
 DELIMITER ;
+
+
+
+
+-- DATAS --
+INSERT INTO `users` (`userId`, `email`, `fullname`, `surname`, `username`, `password`, `avatar`, `userLoginToken`, `userLoginTokenText`, `isActive`, `createdDate`, `updatedDate`) VALUES
+(1, 'ertugruldirik35@gmail.com', 'ertugrul', 'dirik', 'Asikus', 'secret123', '', NULL, NULL, 1, '2022-11-21 14:19:10', '2022-11-21 14:19:10'),
+(2, 'catly@gmail.com', 'Catly', 'Hatly', 'Pisi', 'secret123', '', NULL, NULL, 1, '2022-11-21 14:38:16', '2022-11-21 14:38:16'),
+(3, 'dsa@gmail.com', 'dsa', 'asd', 'qwerty', 'secret123', '', NULL, NULL, 1, '2022-11-21 14:38:16', '2022-11-21 14:38:16');
+
+
+INSERT INTO `products` (`productId`, `categoryId`, `userId`, `productName`, `description`, `imagePath`, `images`, `isActive`, `createdDate`, `updatedDate`) VALUES
+(1, 1, 1, 'Sütlaç', 'Malzemeler\r\n1 litre süt\r\n2 çay bardağı yıkanmış pirinç\r\n1 su bardağı toz şeker\r\n1 paket vanilya\r\n4 su bardağı su\r\n\r\nTarifi\r\n- Sütlaç yapımı için öncelikle pirinçleri iyice yıkayın ve bir tencereye koyun.\r\n\r\n- Üzerine 4 su bardağı suyu ilave edip kaynamaya bırakın.\r\n\r\n- Kaynayınca altını kısın ve biraz daha pişirmeye devam edin. Pişirirken ara ara karıştırmayı ihmal etmeyin.\r\n\r\n- Pirinçler yumuşayıp, suyunu çekince üzerine sütü de ilave edin ve yüksek ateşte kaynayıncaya kadara sık sık karıştırarak pişirin.\r\n\r\n- Kaynamaya başlayınca altını kısın ve 20 dakika da kısık ateşte pişirin.\r\n\r\n- Daha sonra şekeri de ilave ederek karıştırmaya devam et ve 5 dakika daha pişirin ve sonra ocaktan alın.\r\n\r\n- Pişen sütlaca vanilyayı da ekleyin ve biraz daha karıştırın.\r\n\r\n- Hazır olan tatlıyı kaselere bölün ve ister soğuk ister sıcak tüketin.', '', '', 1, '2022-11-21 14:25:56', '2022-11-21 14:25:56'),
+(2, 1, 1, 'Şeftalili Turta', 'Malzemeler\r\n2 adet yumurta\r\n1 paket margarin (250 gram)\r\n4, 5 su bardağı un\r\n1 su bardağı şeker\r\n1 paket kabartma tozu\r\nTartın içine;\r\n\r\n4 orta boy şeftali\r\n1/2 (yarım) su bardağı şeker\r\n\r\nTarif\r\n- Soyup doğradığımız şeftalileri şeker ile suyunu çekene kadar pişirelim. Şeftaliler soğuyana kadar tart hamurunu yapalım.\r\n\r\n- Unu ortasını açıp yumuşak margarini, yumurta, şeker ve kabartma tozunu ekleyip ele yapışmayan özlü bir hamur yoğuralım.\r\n\r\n- Hamuru ikiye ayıralım. Hamurun ayırdığımız kısmını buzluğa kaldırıp rendelenecek kıvama gelene kadar donmasını bekleyelim.\r\n\r\n- Kalan kısmını 25-30 cm çapındaki kalıba yerleştirelim.\r\n\r\n- Hamurun kenarları 1-2 cm. kadar yükseltip çatal yardımı ile delikler açalım ki hamurumuz kabarmasın.\r\n\r\n- Soğuyan şeftalili harcı yayalım üzerine de buzlukta donan hamuru meyvenin üstüne rendeleyip 180 derecede üzeri açık pembe renk alana kadar pişirelim. Afiyet olsun.', '', '', 1, '2022-11-21 14:28:26', '2022-11-21 14:28:26'),
+(3, 2, 1, 'Hokkur Çorbası', 'Malzemeler\r\n3 su bardağı un\r\n1 çay kaşığı tuz\r\n5 yemek kaşığı sıvıyağ\r\n1 yemek kaşığı salça\r\nSu\r\n1 baş küçük soğan\r\n1-2 diş sarımsak\r\n\r\nTarif\r\nUnun içerisine tuzu ilave edip üzerine yavaş yavaş su ilave ediyoruz ve mantı kıvamında 1 künt hamur yapıyoruz. Daha sonra bir tencerenin içine sıvıyağı, salçayı ve minik minik doğradığımız soğanı ilave edip biraz soğanlar ölünceye kadar pişiriyoruz daha sonra üzerine 6 su bardağı sıcak su ilave ediyoruz ve iyice kaynatıyoruz.\r\nDaha sonra ocağın yanında tezgahın üzerine kündümüzü bastırarak yayıyoruz ve kaynayan suyun içine yemek kaşığı ile hamurdan parçalar koparıp atıyoruz. bunu yaparken hızlı olmak önemli  ve 2 kişi ile yapılırsa daha da iyi olur. en sonunda sarımsağımızı ezip çorbaya ilave ediyoruz ve bir süre daha kaynatıp ocaktan alıyoruz sıcak sıcak servis yapıyoruz...', '', '', 1, '2022-11-21 14:36:14', '2022-11-21 14:36:14'),
+(4, 2, 1, 'Mercimek Çorbası', 'Malzemeler\r\n3 yemek kaşığı ayçiçek yağı\r\n1 adet kuru soğan (iri doğranmış)\r\n1 yemek kaşığı un\r\n1 adet havuç (iri doğranmış)\r\n1 adet patates (büyük boy, iri doğranmış)\r\n1 tatlı kaşığı tuz\r\n1 çay kaşığı karabiber\r\n1,5 su bardağı kırmızı ya da sarı mercimek\r\n6 su bardağı sıcak su (1 adet et su tablet ile hazırlanmış)\r\nÜzeri İçin:\r\n3 yemek kaşığı sıvı yağ\r\n2 yemek kaşığı tereyağı\r\n1 tatlı kaşığı kırmızı toz biber\r\n\r\nTarif\r\n- Derin bir tencereye 3 yemek kaşığı sıvı yağ ekleyin. İri doğranmış 1 adet büyük soğanı sıvı yağ ile birlikte kavurun.\r\n\r\n- Kavrulan soğanlara 1 yemek kaşığı unu ekleyin ve kokusu çıkıp, renk alana kadar kavurma işlemini sürdürün. İri parçalar halinde doğradığınız birer adet havuç ve patatesi tencereye aktarıp karıştırmaya devam edin.\r\n\r\n- Tuz, karabiber ve bol suda yıkadıktan sonra suyunu süzdürdüğünüz 1,5 su bardağı mercimeği  de ilave edin ve son kez güzelce karıştırın.\r\n\r\n- 6 su bardağı sıcak suyu da tencereye ilave edin.\r\n\r\n- Ardından kapağını kapatın, patates ve havuçlar yumuşayana kadar ara ara karıştırarak 40 dakika kadar pişirin.\r\n\r\n- Çorba piştikten sonra pürüzsüz bir kıvam alması için; el blenderından geçirin. 5 dakika daha pişirdikten sonra ocaktan alın.\r\n\r\n- 3 yemek kaşığı sıvı yağ ve 2 yemek kaşığı tereyağını bir tavada kızdırın. Üzerine 1 tatlı kaşığı toz kırmızı biberi ekleyin ve 2 dakika yağı kızdırdıktan sonra ocaktan alın.\r\n\r\n- Çorbayı bir kaseye alın ve üzerine kızdırdığınız yağdan gezdirip servis edin.', '', '', 1, '2022-11-21 14:36:14', '2022-11-21 14:36:14');
+
+
 /*
     The MySQL feature for finding words, phrases,
     Boolean combinations of words, and so on within table data, in a faster,

@@ -5,6 +5,8 @@ import mysqlAsi from '../src/database/MysqlAsi.js';
 import ValidationMiddleware from '../src/middleware/ValidationMiddleware.js';
 import Validations from '../src/models/Validations/Validations.js';
 import { randomUUID } from 'crypto';
+import AuthMiddleware from '../src/middleware/Authtencation.js';
+import { uploadPhotoMiddleware } from '../src/middleware/FilesMiddleware.js';
 
 const router = Router();
 

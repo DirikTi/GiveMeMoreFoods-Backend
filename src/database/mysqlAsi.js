@@ -14,12 +14,28 @@ class Mysql {
                     new DatabaseError(err, "MYSQL NOT CONNECTED");
                 } else {
                     console.log("MYSQL CONNECTED");
+                    this.startupMemoryCategory();
                 }
             })
         } catch (error) {
             new DatabaseError(error, "MYSQL NOT CONNECTED");
         }
 
+    }
+
+    /**
+     * @private
+     */
+    startupMemoryCategory() {
+        this.mysqlConnection.query("SELECT COUNT(1) AS count FROM category", (err, result) => {
+            if(result[0].count == 0) {
+                this.mysqlConnection.query("INSERT INTO category (categoryName, description) VALUES " + 
+                    "('Tatlılar', 'Çeşit çeşit tatlılar bulunmakta')," + 
+                    "('Çorbalar', 'Çorba çeşitleri içerir')," + 
+                    "('Pilavlar', 'Çeşitli pilavlar bulunmakta');"
+                );
+            }
+        });
     }
 
     /**
