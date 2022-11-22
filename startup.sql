@@ -85,7 +85,8 @@ CREATE TABLE requests (
   user_id char(100) DEFAULT NULL,
   is_error bit(1) DEFAULT NULL,
   status int(11) DEFAULT NULL,
-  createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
+  createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  PRIMARY KEY(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- If you don't have Engine Archive 
@@ -105,7 +106,7 @@ DELIMITER ;
 
 CREATE VIEW v_products AS
 SELECT p.productId, p.productName, p.description AS productDesc, p.imagePath, p.images, p.isActive AS productIsActive,
-c.categoryId, c.categoryName, c.description AS categoryDesc, c.isActive AS categoryIsActive, c.createdDate AS categoryCreatedDate,
+c.categoryId, c.categoryName, c.description AS categoryDesc,
 (
     SELECT COUNT(1) 
     FROM products_heart_users phu
@@ -122,7 +123,7 @@ INNER JOIN category c ON c.categoryId=p.categoryId
 INNER JOIN users u ON u.userId=p.userId;
 
 CREATE VIEW v_users AS
-SELECT userId, username, fullname, surname, email, password, avatar (
+SELECT userId, username, fullname, surname, email, password, avatar, (
     SELECT COUNT(1) 
     FROM products_heart_users phu 
     WHERE phu.userId=u.userId 
