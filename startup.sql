@@ -206,6 +206,49 @@ INSERT INTO `products_visit_users` (`productHeartUsersId`, `productId`, `categor
 (1, 2, 1, 1, 1, '2022-11-24 12:35:53', '2022-11-24 12:35:53'),
 (2, 1, 1, 1, 1, '2022-11-24 12:35:53', '2022-11-24 12:35:53');
 
+
+CREATE PROCEDURE sp_getTrends()
+BEGIN
+    CREATE TEMPORARY TABLE tmp_trends ENGINE=MEMORY;
+
+    WITH cte (categoryId, categoryPoint) AS
+    (
+        SELECT categoryId FROM 
+    )
+    SELECT col1, col2 FROM cte;
+
+END
+
+
+DELIMITER $$
+CREATE FUNCTION TREND_CATEGORY(visited_summary INT, visitedDate TIMESTAMP, heartCount INT)
+RETURNS BINARY(16)
+DETERMINISTIC
+BEGIN
+    RETURN (
+        LOG(10, HOUR(visitedDate) * 1.2);
+    );
+END $$
+DELIMITER ;
+
+
+SELECT c.categoryId, categoryName, description, (
+    (
+        SELECT COALESCE(COUNT(phu.isHeart), 0)
+    	FROM products_heart_users phu
+        WHERE phu.categoryId=c.categoryId AND phu.isHeart=1
+    ) * 2.5 + (
+        SELECT COALESCE(
+            SUM(pvu.visited) + LOG(10, DATEDIFF(CURRENT_DATE(), pvu.createdDate))
+            , 0)
+    	FROM products_visit_users pvu
+        WHERE pvu.categoryId=c.categoryId
+    )
+) AS trendPoint
+FROM category c
+GROUP BY categoryId, categoryName, description ORDER BY trendPoint DESC;
+
+
 /*
     The MySQL feature for finding words, phrases,
     Boolean combinations of words, and so on within table data, in a faster,
