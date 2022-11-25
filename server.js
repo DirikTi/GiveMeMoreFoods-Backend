@@ -4,6 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 //Routers
 import AccountRoute from './routes/AccountRoute.js';
+import FoodRoute from './routes/FoodRoute.js';
 
 //Service
 import { SocketInit } from "./service/SocketService.js";
@@ -25,6 +26,7 @@ if (LOG_OPTIONS.REQUEST_LOG == true) {
 }
 
 app.use("/api/v1/", AccountRoute);
+app.use("/api/v1/foods/", FoodRoute)
 
 /*
  * ERROR'S

@@ -5,13 +5,51 @@ import mysqlAsi from '../src/database/MysqlAsi.js';
 import ValidationMiddleware from '../src/middleware/ValidationMiddleware.js';
 import Validations from '../src/models/Validations/Validations.js';
 import { randomUUID } from 'crypto';
-import MailSender, { generateEmailCode } from '../src/helpers/MailSender.js';
 import AuthMiddleware from '../src/middleware/Authtencation.js';
+import cache from 'memory-cache';
 
 const router = Router();
 
-const getProductTrendQuery = (categoryId) => {
-    return `SELECT p.productId, p.productName, p.productDesc, p.imagePath, 
+const PRODUCT_TREND_LIMIT = 50
+const getProductTrendQuery = (categoryId, top) => {
+    top = (top - 1) * PRODUCT_TREND_LIMIT;
+    return 
+}
+
+router.get("/", [AuthMiddleware()], async (req, resp) => {
+    
+
+});
+
+router.get("/category/:id", async (req, resp) => {
+
+});
+
+router.get("/product/trend/:id", async (req, resp) => {
+    const categoryId = req.params.id;
+
+    if(categoryId == undefined) {
+        const products = cache.get("productTrend");
+
+        resp.json(successResponse(products));
+        resp.end();
+        return 1;
+    }
+
+
+    if(isNaN(categoryId)) {
+        resp.json(errorResponse(null, "BAD REQUEST"));
+        resp.end();
+        return -1;
+    }
+
+    let productTop = 1;
+    if(req.query.query != undefined && !isNaN(req.query.query)) {
+        productTop = req.query.query;
+    }
+    
+    productTop = (productTop - 1) * PRODUCT_TREND_LIMIT;
+    let query = `SELECT p.productId, p.productName, SUBSTRING(p.productDesc, 1, 50) AS productDesc, p.imagePath, 
     categoryId, heartCount, whoCreateUserId, username, avatar, (
         (
             SELECT COALESCE(
@@ -25,26 +63,11 @@ const getProductTrendQuery = (categoryId) => {
     WHERE categoryId=` + categoryId + `
     GROUP BY p.productId
     ORDER BY trend_point DESC
-    LIMIT 50;`
-}
+    LIMIT ` + PRODUCT_TREND_LIMIT + ` OFFSET ` + productTop + `;`;
+    const products = await mysqlAsi.executeQueryAsync(query);
 
-router.get("/", [AuthMiddleware()], async (req, resp) => {
-    
-
-});
-
-router.get("/category/:id", async (req, resp) => {
-
-});
-
-router.get("/product/trend/:id", async (req, resp) => {
-    let categoryId = req.params.id;
-
-    if(categoryId == undefined) {
-            
-    }
-
-
+    resp.json(successResponse(products))
+    resp.end();
 })
 
 export default router;

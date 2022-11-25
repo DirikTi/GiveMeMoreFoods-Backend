@@ -61,7 +61,7 @@ function toLogRequestDB(logModel) {
         logModel.error = jsonBody.error != undefined ? jsonBody.error : false;
         logModel.status = jsonBody.status != undefined ? jsonBody.status : 200;
 
-        let query = "INSERT INTO requests (request_body, request_query, base_url, headers, method, response_body, sender_ip_address, user_id, is_error, status, created_date) VALUES " +
+        let query = "INSERT INTO requests (request_body, request_query, base_url, headers, method, response_body, sender_ip_address, user_id, is_error, status, createdDate) VALUES " +
             "('" + JSON.stringify(logModel.requestBody) + "', '" + JSON.stringify(logModel.requestQuery) + "', '"
             + logModel.baseUrl + "', '" + JSON.stringify(logModel.headers) + "', '" + logModel.method + "', '" + JSON.stringify(logModel.responseBody)
             + "', '" + logModel.senderIp + "', '" + (logModel.user_id == undefined ? "" : logModel.user_id) + "', " + logModel.error + ", "
