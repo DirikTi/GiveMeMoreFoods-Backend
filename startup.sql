@@ -220,33 +220,25 @@ BEGIN
 END
 
 
-DELIMITER $$
-CREATE FUNCTION TREND_CATEGORY(visited_summary INT, visitedDate TIMESTAMP, heartCount INT)
-RETURNS BINARY(16)
-DETERMINISTIC
-BEGIN
-    RETURN (
-        LOG(10, HOUR(visitedDate) * 1.2);
-    );
-END $$
-DELIMITER ;
-
-
-SELECT c.categoryId, categoryName, description, (
+-- TREND FOODS
+SELECT p.productId, p.productName, p.productDesc, p.imagePath, 
+categoryId, heartCount, whoCreateUserId, username, avatar, (
     (
-        SELECT COALESCE(COUNT(phu.isHeart), 0)
-    	FROM products_heart_users phu
-        WHERE phu.categoryId=c.categoryId AND phu.isHeart=1
-    ) * 2.5 + (
         SELECT COALESCE(
             SUM(pvu.visited) + LOG(10, DATEDIFF(CURRENT_DATE(), pvu.createdDate))
-            , 0)
-    	FROM products_visit_users pvu
-        WHERE pvu.categoryId=c.categoryId
-    )
-) AS trendPoint
-FROM category c
-GROUP BY categoryId, categoryName, description ORDER BY trendPoint DESC;
+        , 0)
+        FROM products_visit_users pvu
+        WHERE pvu.productId=p.productId
+    ) + 2.5 * heartCount
+) AS trend_point
+FROM v_products p
+WHERE categoryId=1
+GROUP BY p.productId
+ORDER BY trend_point DESC
+LIMIT 50;
+
+-- KEŞFET KISMI
+SELECT 
 
 
 /*

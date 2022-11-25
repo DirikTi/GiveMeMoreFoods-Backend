@@ -1,4 +1,5 @@
 import mysqlAsi from "../database/MysqlAsi";
+import cache from "memory-cache";
 
 
 export function TimerInit() {
@@ -11,6 +12,7 @@ export function TimerInit() {
     }
 
     StartupTimerTrendCategory(5);
+    StartupTimerTrendProduct(1);
     
 }
 
@@ -32,6 +34,23 @@ const getCategoryTrendQuery = () => {
     GROUP BY categoryId, categoryName, description ORDER BY trendPoint DESC;`;
 }
 
+const getProductTrendQuery = () => {
+    return `SELECT p.productId, p.productName, p.productDesc, p.imagePath, 
+    categoryId, heartCount, whoCreateUserId, username, avatar, (
+        (
+            SELECT COALESCE(
+                SUM(pvu.visited) + LOG(10, DATEDIFF(CURRENT_DATE(), pvu.createdDate))
+            , 0)
+            FROM products_visit_users pvu
+            WHERE pvu.productId=p.productId
+        ) + 2.5 * heartCount
+    ) AS trend_point
+    FROM v_products p
+    GROUP BY p.productId
+    ORDER BY trend_point DESC
+    LIMIT 50;`
+}
+
 
 function StartupTimerTrendCategory(minute) {
     console.log("Running Category Trend Timer " + minute + " minute");
@@ -43,5 +62,19 @@ function StartupTimerTrendCategory(minute) {
         mysqlAsi.executeQueryAsync(getCategoryTrendQuery()).then((recordset) => {
             cache.put("categoryTrend", recordset);
         }) 
+    }, 60000 * minute);
+}
+
+
+function StartupTimerTrendProduct(minute) {
+    console.log("Running Product Trend Timer " + minute + " minute");
+    mysqlAsi.executeQueryAsync(getProductTrendQuery()).then((recordset) => {
+        cache.put("productTrend", recordset);
+    })
+
+    setInterval(() => {
+        mysqlAsi.executeQueryAsync(getProductTrendQuery()).then((recordset) => {
+            cache.put("productTrend", recordset);
+        });
     }, 60000 * minute);
 }

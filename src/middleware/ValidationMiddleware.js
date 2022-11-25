@@ -23,15 +23,16 @@ export default function ValidationMiddleware(param) {
 }
 
 function deepEqual(x, model) {
-    
     return (typeof x == "string" || typeof x == "boolean" || typeof x == "number") ? (typeof x == model.name.toLowerCase()) 
     : x.map != undefined ? deepEqual(x[0], model[0]) 
     : Object.keys(x).length == Object.keys(model).length && 
     (Object.keys(x).filter((myX) => (
         Object.keys(model).findIndex((myY) => (myX == myY && deepEqual(x[myX], model[myX]))) == -1
     ))).length == 0
-    
-    /*
+}
+
+
+/*
     if (typeof x == "string" || typeof x == "boolean" || typeof x == "number") {
         return typeof x == model.name.toLowerCase()
     } else {
@@ -51,4 +52,3 @@ function deepEqual(x, model) {
         }
     }
     */
-}
