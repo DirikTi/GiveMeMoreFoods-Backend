@@ -17,11 +17,11 @@ router.post('/login', [ValidationMiddleware(Validations.loginAccout)], async (re
     try {
         const encrpytionTargetPassword = MyCrypto.encrpytion(req.body.password);
 
-
+        console.log(encrpytionTargetPassword);
         const token = randomUUID();
         const loginJWT = MyJWT.createToken(token);
     
-        let query = "SELECT * FROM v_users WHERE userEmail='" + email + "', AND password='" + encrpytionTargetPassword + "' LIMIT 1";
+        let query = "SELECT * FROM v_users WHERE email='" + email + "' AND password='" + encrpytionTargetPassword + "' LIMIT 1";
         let results = await mysqlAsi.executeQueryAsync(query);
     
         if (results[0] == undefined) {

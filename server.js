@@ -25,7 +25,7 @@ if (LOG_OPTIONS.REQUEST_LOG == true) {
     app.use(LogsMiddleware());
 }
 
-app.use("/api/v1/", AccountRoute);
+app.use("/api/v1/account/", AccountRoute);
 app.use("/api/v1/foods/", FoodRoute)
 
 /*

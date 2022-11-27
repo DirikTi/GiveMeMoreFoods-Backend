@@ -1,3 +1,9 @@
 2022-11-18 15:58:44 ERROR 'DATABASE ERROR' MESSAGE: 'MYSQL NOT CONNECTED'
 Error: connect ECONNREFUSED 127.0.0.1:3306
 
+2022-11-26 18:16:32 ERROR 'DATABASE ERROR' MESSAGE: 'Cannot execute sql query without Async'
+Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ' AND password='55aacf5aeadbaabe6e' LIMIT 1' at line 1
+
+2022-11-26 18:17:29 ERROR 'DATABASE ERROR' MESSAGE: 'Cannot execute sql query without Async'
+Error: ER_BAD_FIELD_ERROR: Unknown column 'userEmail' in 'where clause'
+

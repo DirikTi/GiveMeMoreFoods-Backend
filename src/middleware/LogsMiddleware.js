@@ -32,6 +32,7 @@ export default function LogsMiddleware() {
         resp.on('finish', () => {
 
             const body = Buffer.concat(chunks).toString('utf-8');
+
             toLogRequestDB({
                 requestBody: typeof req.body == "object" ? JSON.stringify(req.body) : req.body,
                 requestQuery: req.query,
@@ -39,7 +40,7 @@ export default function LogsMiddleware() {
                 createdDate: new Date().getTime().toString(),
                 headers: req.headers,
                 method: req.method,
-                responseBody: body == "" ? JSON.parse(body) : body,
+                responseBody: body == "" ? body : JSON.parse(body),
                 senderIp: req.ip,
                 user_id: req.userID
             });

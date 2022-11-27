@@ -11,18 +11,14 @@ import cache from 'memory-cache';
 const router = Router();
 
 const PRODUCT_TREND_LIMIT = 50
-const getProductTrendQuery = (categoryId, top) => {
-    top = (top - 1) * PRODUCT_TREND_LIMIT;
-    return 
-}
 
-router.get("/", [AuthMiddleware()], async (req, resp) => {
+router.get("/", async (req, resp) => {
     
 
 });
 
 router.get("/category/:id", async (req, resp) => {
-
+    
 });
 
 router.get("/product/trend/:id", async (req, resp) => {
