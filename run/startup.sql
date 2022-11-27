@@ -1,8 +1,8 @@
-DROP DATABASE IF EXISTS food;
+DROP DATABASE IF EXISTS foods;
 
-CREATE DATABASE food;
+CREATE DATABASE foods;
 
-USE food;
+USE foods;
 
 CREATE TABLE users (
     userId INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -98,7 +98,7 @@ CREATE TABLE requests (
 -- If you don't have Engine Archive 
 -- https://stackoverflow.com/questions/55241615/mysql-sys-exec-cant-open-shared-library-lib-mysqludf-sys-so-errno-11-wrong
 
-USE food;
+USE foods;
 
 CREATE FUNCTION CONVERT_UUID(UUID_TOKEN CHAR(32) )
 RETURNS BINARY(16)
@@ -149,7 +149,7 @@ SELECT userId, username, fullname, surname, email, password, avatar, (
 ) AS heartProducts
 FROM users u;
 
-USE food;
+USE foods;
 
 CREATE PROCEDURE sp_createUser(IN _email VARCHAR(127), IN _username VARCHAR(127), IN _fullname VARCHAR(127), 
 IN _surname VARCHAR(127), IN _password VARCHAR(127)) 
