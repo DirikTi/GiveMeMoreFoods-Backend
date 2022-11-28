@@ -13,8 +13,12 @@ const router = Router();
 const PRODUCT_TREND_LIMIT = 50
 
 router.get("/", async (req, resp) => {
-    
+    const categories = cache.get("categoryTrend");
+    const products = cache.get("productTrend");
 
+    resp.json(successResponse({
+        categories, products
+    }));
 });
 
 router.get("/category/:id", async (req, resp) => {
