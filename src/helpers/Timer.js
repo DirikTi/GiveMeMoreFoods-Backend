@@ -1,4 +1,4 @@
-import mysqlAsi from "../database/MysqlAsi";
+import mysqlAsi from "../database/MysqlAsi.js";
 import cache from "memory-cache";
 
 
@@ -9,15 +9,18 @@ export function TimerInit() {
         }, 3000);
 
         return -1;
+    } else {
+        setTimeout(() => {
+            
+            StartupTimerTrendCategory(5);
+            StartupTimerTrendProduct(1);
+        }, 5000);
     }
-
-    StartupTimerTrendCategory(5);
-    StartupTimerTrendProduct(1);
     
 }
 
 const getCategoryTrendQuery = () => {
-    return `SELECT c.categoryId, categoryName, description, (
+    return `SELECT c.categoryId, categoryName, description, imagePath, (
         (
             SELECT COALESCE(COUNT(phu.isHeart), 0)
             FROM products_heart_users phu

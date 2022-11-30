@@ -12,6 +12,7 @@ import { LOG_OPTIONS } from "./src/Config.js";
 
 // Middlewares
 import LogsMiddleware from "./src/middleware/LogsMiddleware.js";
+import { TimerInit } from "./src/helpers/Timer.js";
 
 
 const app = express();
@@ -36,9 +37,10 @@ const server = createServer(app);
 
 
 //SocketInit(server);
+TimerInit();
 
-server.listen(process.env.PORT || '3000', () => {
-    console.log('Server is runnig on port 3000');
+server.listen(process.env.PORT || '3001', () => {
+    console.log('Server is runnig on port 3001');
 });
 
 

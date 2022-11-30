@@ -32,7 +32,7 @@ export default function LogsMiddleware() {
         resp.on('finish', () => {
 
             const body = Buffer.concat(chunks).toString('utf-8');
-
+            
             toLogRequestDB({
                 requestBody: typeof req.body == "object" ? JSON.stringify(req.body) : req.body,
                 requestQuery: req.query,
