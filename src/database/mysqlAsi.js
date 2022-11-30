@@ -29,11 +29,11 @@ class Mysql {
     startupMemoryCategory() {
         this.mysqlConnection.query("SELECT COUNT(1) AS count FROM category", (err, result) => {
             if(result[0].count == 0) {
-                this.mysqlConnection.query("INSERT INTO category (categoryName, description) VALUES " + 
-                    "('Tatlılar', 'Çeşit çeşit tatlılar bulunmakta')," + 
-                    "('Çorbalar', 'Çorba çeşitleri içerir')," + 
-                    "('Pilavlar', 'Çeşitli pilavlar bulunmakta');"
-                );
+                this.mysqlConnection.query("INSERT INTO category (categoryName, description, imagePath) VALUES " + 
+                    "('Tatlılar', 'Çeşit çeşit tatlılar bulunmakta', 'https://lh3.google.com/u/0/d/1V3e2FzV-cPf61FN05evqFNLASfy5g6WF')," + 
+                    "('Çorbalar', 'Çorba çeşitleri içerir', 'https://lh3.google.com/u/0/d/1Gi7ntUIk8tbcDFcM7VPoa9c4u7UQ7FIY')," +  
+                    "('Pilavlar', 'Çeşitli pilavlar bulunmakta', 'https://lh3.google.com/u/0/d/1Ie1cPyM04sZB2EvpKWIA9sh499_9xab5');"
+                    );
             }
         });
     }

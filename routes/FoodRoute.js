@@ -25,6 +25,24 @@ router.get("/category/:id", async (req, resp) => {
     
 });
 
+router.get("/product", async(req, resp) => {
+    let productId = req.query.id;
+
+    if(productId == undefined) {
+        resp.json(errorResponse(null, "BAD REQUEST", 400));
+        resp.end();
+        return -1;
+    }
+
+    let query = "SELECT * FROM v_product WHERE productId=" + productId;
+    const result = await mysqlAsi.executeQueryAsync(query);
+
+    resp.json(successResponse(result));
+    resp.end();
+    return -1;
+
+});
+
 router.get("/product/trend/:id", async (req, resp) => {
     const categoryId = req.params.id;
 
@@ -68,6 +86,10 @@ router.get("/product/trend/:id", async (req, resp) => {
 
     resp.json(successResponse(products))
     resp.end();
+});
+
+router.get("/product/explore", [AuthMiddleware()], async(req, resp) => {
+    let query
 })
 
 export default router;
