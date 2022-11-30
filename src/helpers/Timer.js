@@ -58,6 +58,12 @@ const getProductTrendQuery = () => {
 function StartupTimerTrendCategory(minute) {
     console.log("Running Category Trend Timer " + minute + " minute");
     mysqlAsi.executeQueryAsync(getCategoryTrendQuery()).then((recordset) => {
+        recordset.unshift({
+            categoryId: 0,
+            categoryName: "Hepsi",
+            description: "Hepsi içeriyor",
+            imagePath: "https://lh3.google.com/u/0/d/1GqOrdO9wFtgVa_m7bCPKWZT1KHxcEuW4"
+        })
         cache.put("categoryTrend", recordset);
     })
 
