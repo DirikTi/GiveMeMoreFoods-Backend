@@ -15,7 +15,7 @@ const PRODUCT_TREND_LIMIT = 50
 router.get("/", async (req, resp) => {
     const categories = cache.get("categoryTrend");
     const products = cache.get("productTrend");
-
+    console.log(categories);
     resp.json(successResponse({
         categories, products
     }));
@@ -89,7 +89,7 @@ router.get("/product/trend/:id", async (req, resp) => {
 });
 
 router.get("/product/explore", [AuthMiddleware()], async(req, resp) => {
-    let query
+    let query = "SELECT * FROM s"
 })
 
 export default router;

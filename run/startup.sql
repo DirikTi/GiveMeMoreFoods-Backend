@@ -214,6 +214,45 @@ INSERT INTO `products_visit_users` (`productHeartUsersId`, `productId`, `categor
 
 
 
+
+-- EXPLORE FOODS
+
+CREATE TEMPORARY TABLE temp_category AS 
+SELECT cc.categoryId, SUM(cc.point) AS point 
+FROM (
+    SELECT phu.categoryId, (COUNT(phu.productHeartUsersId) * 2.5) AS point
+    FROM  products_heart_users phu
+    WHERE isHeart=1 AND userId=1
+    GROUP BY phu.categoryId
+    UNION ALL
+    SELECT pvu.categoryId, (SUM(pvu.visited) * 0.8) AS point
+    FROM products_visit_users pvu
+    WHERE userId=1
+    GROUP BY pvu.categoryId
+) cc
+GROUP BY cc.categoryId
+ORDER BY cc.point DESC;
+
+SELECT * 
+FROM temp_category; 
+
+SELECT vp.productId, vp.productName, c.categoryId 
+FROM temp_category c, (
+	SELECT p.productId, p.productName
+    FROM v_products p
+    WHERE p.categoryId=tem_category.categoryId
+    LIMIT 1
+) AS vp;
+
+SELECT @sum_points:=SUM(point) FROM temp_category;
+SELECT @sum_points;
+
+
+
+SELECT * 
+FROM v_products p 
+INNER JOIN 
+
 -- TREND FOODS
 /*SELECT p.productId, p.productName, p.productDesc, p.imagePath, 
 categoryId, heartCount, whoCreateUserId, username, avatar, (

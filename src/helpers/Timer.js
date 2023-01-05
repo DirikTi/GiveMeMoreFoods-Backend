@@ -62,13 +62,19 @@ function StartupTimerTrendCategory(minute) {
             categoryId: 0,
             categoryName: "Hepsi",
             description: "Hepsi içeriyor",
-            imagePath: "https://lh3.google.com/u/0/d/1GqOrdO9wFtgVa_m7bCPKWZT1KHxcEuW4"
+            imagePath: "https://drive.google.com/uc?id=1GqOrdO9wFtgVa_m7bCPKWZT1KHxcEuW4"
         })
         cache.put("categoryTrend", recordset);
     })
 
     setInterval(() => {
         mysqlAsi.executeQueryAsync(getCategoryTrendQuery()).then((recordset) => {
+            recordset.unshift({
+                categoryId: 0,
+                categoryName: "Hepsi",
+                description: "Hepsi içeriyor",
+                imagePath: "https://drive.google.com/uc?id=1GqOrdO9wFtgVa_m7bCPKWZT1KHxcEuW4"
+            })
             cache.put("categoryTrend", recordset);
         }) 
     }, 60000 * minute);

@@ -7,3 +7,6 @@ Error: ER_PARSE_ERROR: You have an error in your SQL syntax; check the manual th
 2022-11-26 18:17:29 ERROR 'DATABASE ERROR' MESSAGE: 'Cannot execute sql query without Async'
 Error: ER_BAD_FIELD_ERROR: Unknown column 'userEmail' in 'where clause'
 
+2022-12-01 15:19:59 ERROR 'DATABASE ERROR' MESSAGE: 'MYSQL NOT CONNECTED'
+Error: connect ECONNREFUSED 127.0.0.1:3306
+
